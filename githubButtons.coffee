@@ -1,8 +1,6 @@
 $ = jQuery
 
-debug = true
-
-
+debug = false
 
 addCommas = (n) ->
     n.toString().replace(/(\d)(?=(\d{3})+$)/g, '$1,')
@@ -46,7 +44,6 @@ $.fn.gitButtons = ->
             url  = 'https://api.github.com/repos/' + options.user + '/' + options.repo
             link = link + '/' + options.repo
 
-
         button.append(
             $('<a>').attr('href', link).attr( 'class', 'gh-btn').append(
                 $('<span>').attr( 'class', 'gh-ico')
@@ -81,6 +78,4 @@ $.fn.gitButtons = ->
                         log data.data['message']
 
                 error: (x, t, m) ->
-
-
 
