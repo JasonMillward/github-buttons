@@ -1,6 +1,6 @@
 $ = jQuery
 
-debug = false
+debug = true
 
 addCommas = (n) ->
     n.toString().replace(/(\d)(?=(\d{3})+$)/g, '$1,')
@@ -26,21 +26,21 @@ $.fn.gitButtons = ->
         button = $( this )
 
         options =
-            user:   button.attr('data-user')
-            method: button.attr('data-type')
-            repo:   button.attr('data-repo')
-            count:  button.attr('data-count')
+            user:   button.data('user')
+            type:   button.data('type')
+            repo:   button.data('repo')
+            count:  button.data('count')
 
-        button.addClass( "github-btn github-watchers github-btn-large" )
+        button.addClass( "github-btn-large" )
 
         link = 'https://github.com/' + options.user
 
-        if options.method == 'follow'
+        if options.type == 'follow'
             text = 'Follow @' + options.user
             url  = 'https://api.github.com/users/' + options.user
 
-        else if options.method == 'star' ||  options.method ==  'fork'
-            text = ucaseFirst(options.method)
+        else if options.type == 'star' ||  options.type ==  'fork'
+            text = ucaseFirst(options.type)
             url  = 'https://api.github.com/repos/' + options.user + '/' + options.repo
             link = link + '/' + options.repo
 
@@ -52,7 +52,8 @@ $.fn.gitButtons = ->
             )
         )
 
-        if options.count == "true"
+        if options.count
+
             $.ajax
                 type: 'GET',
                 url: url,
@@ -61,14 +62,10 @@ $.fn.gitButtons = ->
 
                     if typeof data.data['message'] == "undefined"
 
-                        if options.method == 'follow'
-                            count = data.data['followers']
-
-                        if options.method == 'star'
-                            count = data.data['watchers']
-
-                        if options.method == 'fork'
-                            count = data.data['forks']
+                        switch options.type
+                            when 'follow' then count = data.data['followers']
+                            when 'star' then count = data.data['watchers']
+                            when 'fork' then count = data.data['forks']
 
                         button.append(
                             $('<a>').attr('href', link).attr('class', 'gh-count').text(addCommas(count))
@@ -78,4 +75,3 @@ $.fn.gitButtons = ->
                         log data.data['message']
 
                 error: (x, t, m) ->
-
